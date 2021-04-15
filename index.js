@@ -252,9 +252,9 @@ class Peer extends stream.Duplex {
     if (this.destroyed) throw errCode(new Error('cannot addStream after peer is destroyed'), 'ERR_DESTROYED')
     this._debug('addStream()')
 
-    this._pc.addStream(stream);
+    this._pc.addStream(stream)
 
-    this._needsNegotiation();
+    this._needsNegotiation()
   }
 
   /**
@@ -266,11 +266,11 @@ class Peer extends stream.Duplex {
     if (this.destroyed) throw errCode(new Error('cannot removeStream after peer is destroyed'), 'ERR_DESTROYED')
     this._debug('removeSenders()')
 
-    this._pc.removeStream(stream);
+    this._pc.removeStream(stream)
 
     queueMicrotask(() => {
-      this._needsNegotiation();
-    });
+      this._needsNegotiation()
+    })
   }
 
   _needsNegotiation () {
@@ -534,7 +534,6 @@ class Peer extends stream.Duplex {
         this.destroy(errCode(err, 'ERR_CREATE_OFFER'))
       })
   }
-
 
   _createAnswer () {
     if (this.destroyed) return
@@ -871,9 +870,9 @@ class Peer extends stream.Duplex {
   }
 
   _onAddStream (event) {
-    if (this.destroyed) return;
+    if (this.destroyed) return
 
-    this._remoteStreams.push(event.stream);
+    this._remoteStreams.push(event.stream)
     queueMicrotask(() => {
       this.emit('stream', event.stream)
     })
