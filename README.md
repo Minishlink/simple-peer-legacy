@@ -320,8 +320,7 @@ Send text/binary data to the remote peer. `data` can be any of several types: `S
 `Buffer` (see [buffer](https://github.com/feross/buffer)), `ArrayBufferView` (`Uint8Array`,
 etc.), `ArrayBuffer`, or `Blob` (in browsers that support it).
 
-Note: If this method is called before the `peer.on('connect')` event has fired, then data
-will be buffered.
+Note: If this method is called before the `peer.on('connect')` event has fired, then an exception will be thrown. Use `peer.write(data)` (which is inherited from the node.js [duplex stream](http://nodejs.org/api/stream.html) interface) if you want this data to be buffered instead.
 
 ### `peer.addStream(stream)`
 
