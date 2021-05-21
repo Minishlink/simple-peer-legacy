@@ -496,14 +496,27 @@ class Peer extends stream.Duplex {
     }, this.iceCompleteTimeout)
   }
 
+  _getTransformedRTCSessionDescription (description) {
+    let sdp = description.sdp
+    if (!this.trickle && !this.allowHalfTrickle) {
+      sdp = filterTrickle(sdp)
+    }
+
+    sdp = this.sdpTransform(sdp)
+
+    return new (this._wrtc.RTCSessionDescription)({
+      type: description.type,
+      sdp
+    })
+  }
+
   _createOffer () {
     if (this.destroyed) return
 
     this._pc.createOffer(this.offerOptions)
+      .then(this._getTransformedRTCSessionDescription.bind(this))
       .then(offer => {
         if (this.destroyed) return
-        if (!this.trickle && !this.allowHalfTrickle) offer.sdp = filterTrickle(offer.sdp)
-        offer.sdp = this.sdpTransform(offer.sdp)
 
         const sendOffer = () => {
           if (this.destroyed) return
@@ -539,10 +552,9 @@ class Peer extends stream.Duplex {
     if (this.destroyed) return
 
     this._pc.createAnswer(this.answerOptions)
+      .then(this._getTransformedRTCSessionDescription.bind(this))
       .then(answer => {
         if (this.destroyed) return
-        if (!this.trickle && !this.allowHalfTrickle) answer.sdp = filterTrickle(answer.sdp)
-        answer.sdp = this.sdpTransform(answer.sdp)
 
         const sendAnswer = () => {
           if (this.destroyed) return
